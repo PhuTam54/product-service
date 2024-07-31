@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     Product findByNameAndDeletedAtIsNull(String name);
@@ -15,6 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findAll(Pageable pageable);
     Page<Product> findByDeletedAtIsNotNull(Pageable pageable);
     Page<Product> findByDeletedAtIsNull(Pageable pageable);
-
     boolean existsByName(String name);
+    List<Product> findByProductIdIn(Set<Long> productIds);
 }

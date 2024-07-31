@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin()
@@ -35,7 +36,21 @@ public class ProductController {
         return productService.getAllProducts(PageRequest.of(page -1, limit));
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        ProductDTO product = productService.getProductById(id);
+        if (product == null) {
+            throw new NotFoundException("Product not found with id: " + id);
+        }
+        return ResponseEntity.ok(product);
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<?> getProductsByIds(@RequestBody Set<Long> productIds) {
+        return ResponseEntity.ok(productService.getProductsByIds(productIds));
+    }
+
+    @GetMapping("/name/{name}")
     public ResponseEntity<?> getProductByName(@PathVariable String name) {
         ProductDTO product = productService.getProductByName(name);
         if (product == null) {

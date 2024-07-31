@@ -6,8 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public interface ProductService {
+    int countProducts();
     Page<ProductDTO> getAllProducts(Pageable pageable);
     ProductDTO getProductByName(String name);
     ProductDTO getProductById(Long id);
@@ -17,4 +21,5 @@ public interface ProductService {
     void deleteProduct(long id);
     void moveToTrash(Long id);
     Page<ProductDTO> getInTrash(Pageable pageable);
+    List<ProductDTO> getProductsByIds(Set<Long> productIds);
 }

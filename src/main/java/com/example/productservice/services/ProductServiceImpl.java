@@ -4,17 +4,26 @@ import com.example.productservice.dto.CategoryDTO;
 import com.example.productservice.dto.ProductDTO;
 import com.example.productservice.entities.Category;
 import com.example.productservice.entities.Product;
+import com.example.productservice.exception.CustomException;
 import com.example.productservice.exception.NotFoundException;
 import com.example.productservice.mapper.CategoryMapper;
 import com.example.productservice.mapper.ProductMapper;
 import com.example.productservice.repositories.ProductRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +36,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
 
     private final CategoryMapper categoryMapper;
+
+    @Override
+    public int countProducts() {
+        return (int) productRepository.count();
+    }
 
     @Override
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
@@ -48,6 +62,17 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
         return productMapper.INSTANCE.productToProductDTO(product);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByIds(Set<Long> productIds) {
+        List<Product> products = productRepository.findByProductIdIn(productIds);
+        products.forEach(product -> {
+            if (product.getProductId() == null) {
+                throw new CustomException("Product is not found", HttpStatus.BAD_REQUEST);
+            }
+        });
+        return productMapper.INSTANCE.productListToProductDTOList(products);
     }
 
     @Override
