@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1/demo-gits")
 public class DemoGitController {
 
     private final DemoGitService demogitService;
